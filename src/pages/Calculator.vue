@@ -1,0 +1,130 @@
+<template>
+  <q-page class="flex flex-center">
+      <div class="row">
+        <q-input outlined class="col-4 q-pa-sm" v-model="productSize.width" label="Sirka uzitku" />
+        <q-input outlined class="col-4 q-pa-sm" v-model="productSize.height" label="Vyska uzitku" />
+        <q-input outlined class="col-4 q-pa-sm" v-model="pcs" label="Pocet ks" />
+        <q-input outlined class="col-4 q-pa-sm" v-model="kgPrice" label="Cena za Kg" />
+        <q-input outlined class="col-4 q-pa-sm" v-model="prepairCost" label="Cena prepress" />
+        <q-input outlined class="col-4 q-pa-sm" v-model="comissionProc" label="Multiplikator provize" />
+        <q-input outlined class="col-6 q-pa-sm" v-model="paperWeight" label="Plosna hmotnost gramy" />
+        <q-input outlined class="col-6 q-pa-sm" v-model="arcPrintCost" label="Cena za tisk archu" />
+        <q-select outlined class="col-6 q-pa-sm" v-model="format" :options="formatOptions" label="Vyber format" />
+        <q-toggle v-model="pdfInput" label="Mam pdf k dispozici" />
+        <div v-show="pdfInput">
+          <q-uploader
+            url="http://localhost:8088/upload/"
+            label="Omezeno na PDF"
+            multiple
+            style="max-width: 600px"
+          />
+        </div>
+        <q-card
+            bordered class="bg-grey-4 text-deep-purple q-ma-sm"
+        >
+          <q-card-section>
+            <div class="text-h6">Pocet arc je:</div>
+            <div class="text-subtitle1"> {{pcs / onArc}}</div>
+          </q-card-section>
+        </q-card>
+
+        <q-card
+            bordered class="bg-white text-lime q-ma-sm"
+        >
+          <q-card-section>
+            <div class="text-h6">Cena archu</div>
+            <div class="text-subtitle2">{{(sheetPrice).toFixed(3)}}Kc</div>
+            <div class="text-h6">Cena papiru celkem:</div>
+            <div class="text-subtitle2">{{paperPriceTotal().toFixed(2)}}Kc</div>
+            <div class="text-h6">Hmotnost archu je:</div>
+            <div class="text-subtitle2">{{(sheetSize * paperWeight).toFixed(2)}}g</div>
+            <div class="text-h6">Na arch se vejde:</div>
+            <div class="text-subtitle2">{{(onArc).toFixed(0)}}ks</div>
+            <div class="text-h6">Za tisk:</div>
+            <div class="text-subtitle2">{{(numArc * arcPrintCost).toFixed(0)}}kc</div>
+            <div class="text-h2">Celkem:</div>
+            <div class="text-subtitle1">{{((printTotalPrice() + paperPriceTotal())*comissionProc).toFixed(0)}}kc</div>
+          </q-card-section>
+        </q-card>
+      </div>
+    <example1 />
+  </q-page>
+</template>
+
+<style>
+</style>
+
+<script>
+export default {
+  name: 'PageIndex',
+
+  components: {
+    'example1': () => import('../components/Example1')
+  },
+
+  data () {
+    return {
+      arcPrintCost: 1.5,
+      comissionProc: 1.15,
+      productSize: {
+        width: 0,
+        height: 0
+      },
+      pcs: 1,
+      kgPrice: 23,
+      paperWeight: 130,
+      pdfInput: false,
+      format: '320x450',
+      prepairCost: 300,
+      paper: {
+        width: 0,
+        height: 0
+      },
+      formatOptions: [
+        '320x450', '430x610', '450x640', '480x650'
+      ]
+    }
+  },
+  methods: {
+    setPaperFromString: function (formatText) {
+      this.paper.width = formatText.substr(0, 3)
+      this.paper.height = formatText.substr(4, 6)
+    },
+    paperPriceTotal: function () {
+      return this.sheetPrice * this.numArc
+    },
+    printTotalPrice: function () {
+      return (this.numArc * this.arcPrintCost) + this.prepairCost
+    }
+  },
+  computed: {
+    onArc: function () {
+      if ((this.productSize.width === 0) || (this.productSize.height === 0)) { return 1 }
+      var var1x = Math.floor(this.paper.width / this.productSize.width)
+      var var1y = Math.floor(this.paper.height / this.productSize.height)
+      var var2x = Math.floor(this.paper.height / this.productSize.width)
+      var var2y = Math.floor(this.paper.width / this.productSize.height)
+      if ((var1x * var1y) > (var2x * var2y)) {
+        return Math.floor(var1x * var1y)
+      } else {
+        return Math.floor(var2x * var2y)
+      }
+    },
+    numArc: function () {
+      return Math.floor(this.pcs / this.onArc)
+    },
+    sheetSize: function () {
+      if (this.format == null) {
+        return 0
+      }
+      this.setPaperFromString(this.format)
+      return this.paper.width * this.paper.height / 1000000
+    },
+    sheetPrice: function () {
+      this.setPaperFromString(this.format)
+      return this.sheetSize * this.paperWeight * this.kgPrice / 1000
+    }
+  }
+
+}
+</script>

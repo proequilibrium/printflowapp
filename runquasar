@@ -1,0 +1,2 @@
+quasar dev . -p 8010
+cd /home/recoder/prog/jafakrypt/quasarexamp/test1 ; env PYTHONIOENCODING=UTF-8 PYTHONUNBUFFERED=1 /home/recoder/.virtualenvs/py36/bin/python3 /home/recoder/.vscode-oss/extensions/ms-python.python-2019.6.24221/pythonFiles/ptvsd_launcher.py --default --client --host localhost --port 38421 /home/recoder/prog/jafakrypt/quasarexamp/test1/backend/printflowback/manage.py runserver localhost:8088 --noreload
