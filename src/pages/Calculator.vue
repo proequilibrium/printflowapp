@@ -1,14 +1,15 @@
 <template>
   <q-page class="flex flex-center">
       <div class="row">
-        <q-input outlined class="col-4 q-pa-sm" v-model="productSize.width" label="Sirka uzitku" />
-        <q-input outlined class="col-4 q-pa-sm" v-model="productSize.height" label="Vyska uzitku" />
-        <q-input outlined class="col-4 q-pa-sm" v-model="pcs" label="Pocet ks" />
-        <q-input outlined class="col-4 q-pa-sm" v-model="kgPrice" label="Cena za Kg" />
-        <q-input outlined class="col-4 q-pa-sm" v-model="prepairCost" label="Cena prepress" />
-        <q-input outlined class="col-4 q-pa-sm" v-model="comissionProc" label="Multiplikator provize" />
-        <q-input outlined class="col-6 q-pa-sm" v-model="paperWeight" label="Plosna hmotnost gramy" />
-        <q-input outlined class="col-6 q-pa-sm" v-model="arcPrintCost" label="Cena za tisk archu" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="productSize.width" label="Sirka uzitku" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="productSize.height" label="Vyska uzitku" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="pcs" label="Pocet ks" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="kgPrice" label="Cena za Kg" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="prePressCost" label="Cena prepress" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="comissionProc" label="Multiplikator provize" />
+        <q-input outlined class="col-6 q-pa-sm" type="number" v-model="paperWeight" label="Plosna hmotnost gramy" />
+        <q-input outlined class="col-6 q-pa-sm" type="number" v-model="arcPrintCost" label="Cena za tisk archu" />
+        <q-toggle v-model="doubleSide" label="Oboustrane" />
         <q-select outlined class="col-6 q-pa-sm" v-model="format" :options="formatOptions" label="Vyber format" />
         <q-toggle v-model="pdfInput" label="Mam pdf k dispozici" />
         <div v-show="pdfInput">
@@ -19,39 +20,42 @@
             style="max-width: 600px"
           />
         </div>
-        <q-card
-            bordered class="bg-grey-4 text-deep-purple q-ma-sm"
-        >
-          <q-card-section>
-            <div class="text-h6">Pocet arc je:</div>
-            <div class="text-subtitle1"> {{pcs / onArc}}</div>
-          </q-card-section>
-        </q-card>
-
-        <q-card
-            bordered class="bg-white text-lime q-ma-sm"
-        >
-          <q-card-section>
-            <div class="text-h6">Cena archu</div>
-            <div class="text-subtitle2">{{(sheetPrice).toFixed(3)}}Kc</div>
-            <div class="text-h6">Cena papiru celkem:</div>
-            <div class="text-subtitle2">{{paperPriceTotal().toFixed(2)}}Kc</div>
-            <div class="text-h6">Hmotnost archu je:</div>
-            <div class="text-subtitle2">{{(sheetSize * paperWeight).toFixed(2)}}g</div>
-            <div class="text-h6">Na arch se vejde:</div>
-            <div class="text-subtitle2">{{(onArc).toFixed(0)}}ks</div>
-            <div class="text-h6">Za tisk:</div>
-            <div class="text-subtitle2">{{(numArc * arcPrintCost).toFixed(0)}}kc</div>
-            <div class="text-h2">Celkem:</div>
-            <div class="text-subtitle1">{{((printTotalPrice() + paperPriceTotal())*comissionProc).toFixed(0)}}kc</div>
-          </q-card-section>
-        </q-card>
+          <q-card
+              dark bordered class="q-pa-md row bg-grey-6 text-white "
+          >
+            <q-card-section class="my-card">
+              <div class="text-h6">Pocet arc je:</div>
+              <div class="text-subtitle1"> {{pcs / onArc}}</div>
+            </q-card-section>
+          </q-card>
+          <q-card
+            dark bordered class="row bg-grey-6 text-white q-pa-md"
+          >
+            <q-card-section class="my-card">
+              <div class="text-h6">Cena archu</div>
+              <div class="text-subtitle2">{{(sheetPrice).toFixed(3)}}Kc</div>
+              <div class="text-h6">Cena papiru celkem:</div>
+              <div class="text-subtitle2">{{paperPriceTotal().toFixed(2)}}Kc</div>
+              <div class="text-h6">Hmotnost archu je:</div>
+              <div class="text-subtitle2">{{(sheetSize * paperWeight).toFixed(2)}}g</div>
+              <div class="text-h6">Na arch se vejde:</div>
+              <div class="text-subtitle2">{{(onArc).toFixed(0)}}ks</div>
+              <div class="text-h6">Za tisk:</div>
+              <div class="text-subtitle2">{{(numArc * arcPrintCost).toFixed(0)}}kc---{{(printTime()).toFixed(0)}} minuty</div>
+              <q-separator inset />
+              <div class="text-h2">Celkem:</div>
+              <div class="text-subtitle1">{{((printTotalPrice() + paperPriceTotal())*comissionProc).toFixed(0)}}kc</div>
+            </q-card-section>
+          </q-card>
       </div>
     <example1 />
   </q-page>
 </template>
 
-<style>
+<style lang="stylus" scoped>
+.my-card
+  width 100%
+  max-width 250px
 </style>
 
 <script>
@@ -64,18 +68,19 @@ export default {
 
   data () {
     return {
-      arcPrintCost: 1.5,
-      comissionProc: 1.15,
+      doubleSide: false,
+      arcPrintCost: 2.5,
+      comissionProc: 1.2,
       productSize: {
-        width: 0,
-        height: 0
+        width: 148,
+        height: 210
       },
-      pcs: 1,
+      pcs: 100,
       kgPrice: 23,
       paperWeight: 130,
       pdfInput: false,
       format: '320x450',
-      prepairCost: 300,
+      prePressCost: 250,
       paper: {
         width: 0,
         height: 0
@@ -93,8 +98,18 @@ export default {
     paperPriceTotal: function () {
       return this.sheetPrice * this.numArc
     },
+    printTime: function () {
+      if (this.doubleSide) {
+        return this.numArc / 15 * 2
+      }
+      return this.numArc / 15
+    },
     printTotalPrice: function () {
-      return (this.numArc * this.arcPrintCost) + this.prepairCost
+      let arcPrintCosts = this.arcPrintCost
+      if (this.doubleSide) {
+        arcPrintCosts = 2 * arcPrintCosts
+      }
+      return ((this.numArc * arcPrintCosts) + parseInt(this.prePressCost))
     }
   },
   computed: {
