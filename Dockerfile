@@ -1,14 +1,7 @@
-#minimalistic instalation
-FROM node
+FROM nginx:1.17.4-alpine
+COPY ./dist/spa/ /usr/share/nginx/html
 
-#set workdir
-WORKDIR /app
-COPY package*.json ./
-USER root
-RUN set -xe  \
-    && npm install -g @quasar/cli
-    # && rm -rf /vr/cache/apk/* /tmp/*
-COPY ./src ./app
-RUN quasar dev -p 8000
+COPY nginx.conf /etc/nginx
 
-EXPOSE 8000
+EXPOSE 8080
+CMD ["nginx", "-g", "daemon off;"]

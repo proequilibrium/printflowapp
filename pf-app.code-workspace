@@ -2,6 +2,15 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "/home/recoder/prog/jafakrypt/quasarexamp/test2"
+		},
+		{
+			"path": "/home/recoder/prog/jafakrypt/vuejs/vue-todo"
+		},
+		{
+			"path": "/home/recoder/prog/dock/docker-node"
 		}
 	],
 	"settings": {}
