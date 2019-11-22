@@ -1,7 +1,7 @@
 FROM nginx:1.17.4-alpine
-COPY ./dist/spa/ /usr/share/nginx/html
+ADD dist/spa/ /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx
+ADD nginx.conf /etc/nginx
 
 EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]

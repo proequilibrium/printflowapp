@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "/home/recoder/prog/dock/docker-node"
+		},
+		{
+			"path": "/home/recoder/prog/dock/docker-nginx-simple"
 		}
 	],
 	"settings": {}

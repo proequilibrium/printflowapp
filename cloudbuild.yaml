@@ -1,0 +1,9 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/pf-quasar/pf-quasar-dep', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/pf-quasar/pf-quasar-dep']
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'run', 'deploy', 'pf-quasar-dep', '--image', 'gcr.io/pf-quasar/pf-quasar-dep', --region, 'europe-west1', '--platform', 'managed']
+images:
+- gcr.io/pf-quasar/pf-quasar-dep
