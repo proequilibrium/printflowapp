@@ -4,6 +4,8 @@
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="productSize.width" label="Sirka uzitku" />
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="productSize.height" label="Vyska uzitku" />
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="pcs" label="Pocet ks" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="pages_num" label="Pocet stran" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="bleed" label="Spadavka" />
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="kgPrice" label="Cena za Kg" />
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="prePressCost" label="Cena prepress" />
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="comissionProc" label="Multiplikator provize" />
@@ -24,7 +26,7 @@
               dark bordered class="q-pa-md row bg-grey-6 text-white "
           >
             <q-card-section class="my-card">
-              <div class="text-h6">Pocet arc je:</div>
+              <div class="text-h6">Pocet arc je:{{this.numArc}}</div>
               <div class="text-subtitle1"> {{pcs / onArc}}</div>
             </q-card-section>
           </q-card>
@@ -69,8 +71,10 @@ export default {
   data () {
     return {
       doubleSide: false,
+      bleed: 2,
       arcPrintCost: 2.5,
       comissionProc: 1.2,
+      pages_num: 1,
       productSize: {
         width: 148,
         height: 210
@@ -86,7 +90,7 @@ export default {
         height: 0
       },
       formatOptions: [
-        '320x450', '430x610', '450x640', '480x650'
+        '320x450', '330x480', '305x420', '430x610', '450x640', '480x650'
       ]
     }
   },
@@ -114,11 +118,17 @@ export default {
   },
   computed: {
     onArc: function () {
-      if ((this.productSize.width === 0) || (this.productSize.height === 0)) { return 1 }
-      var var1x = Math.floor(this.paper.width / this.productSize.width)
-      var var1y = Math.floor(this.paper.height / this.productSize.height)
-      var var2x = Math.floor(this.paper.height / this.productSize.width)
-      var var2y = Math.floor(this.paper.width / this.productSize.height)
+      // here i can put non printable boundaries of the paper
+      let paperW = this.paper.width
+      let paperH = this.paper.height
+      // here i can add bleed and etc.
+      let productW = this.productSize.width + (this.bleed * 2)
+      let productH = this.productSize.height + (this.bleed * 2)
+      if ((productW === 0) || (productH === 0)) { return 1 }
+      var var1x = Math.floor(paperW / productW)
+      var var1y = Math.floor(paperH / productH)
+      var var2x = Math.floor(paperH / productW)
+      var var2y = Math.floor(paperW / productH)
       if ((var1x * var1y) > (var2x * var2y)) {
         return Math.floor(var1x * var1y)
       } else {
@@ -126,7 +136,7 @@ export default {
       }
     },
     numArc: function () {
-      return Math.floor(this.pcs / this.onArc)
+      return Math.floor((this.pcs / this.onArc) * this.pages_num)
     },
     sheetSize: function () {
       if (this.format == null) {
