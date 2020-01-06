@@ -1,8 +1,8 @@
 <template>
   <q-page class="flex flex-center">
       <div class="row">
-        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="productSize.width" label="Sirka uzitku" />
-        <q-input outlined class="col-4 q-pa-sm" type="number" v-model="productSize.height" label="Vyska uzitku" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model.number="productSize.width" label="Sirka uzitku" />
+        <q-input outlined class="col-4 q-pa-sm" type="number" v-model.number="productSize.height" label="Vyska uzitku" />
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="pcs" label="Pocet ks" />
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="pages_num" label="Pocet stran" />
         <q-input outlined class="col-4 q-pa-sm" type="number" v-model="bleed" label="Spadavka" />
@@ -39,7 +39,7 @@
               <div class="text-h6">Cena papiru celkem:</div>
               <div class="text-subtitle2">{{paperPriceTotal().toFixed(2)}}Kc</div>
               <div class="text-h6">Hmotnost archu je:</div>
-              <div class="text-subtitle2">{{(sheetSize * paperWeight).toFixed(2)}}g</div>
+              <div class="text-subtitle2">{{(sheetSizeInMeters * paperWeight).toFixed(2)}}g</div>
               <div class="text-h6">Na arch se vejde:</div>
               <div class="text-subtitle2">{{(onArc).toFixed(0)}}ks</div>
               <div class="text-h6">Za tisk:</div>
@@ -90,7 +90,7 @@ export default {
         height: 0
       },
       formatOptions: [
-        '320x450', '330x480', '305x420', '430x610', '450x640', '480x650'
+        '320x450', '330x480', '305x428', '430x610', '450x640', '480x650'
       ]
     }
   },
@@ -138,7 +138,7 @@ export default {
     numArc: function () {
       return Math.floor((this.pcs / this.onArc) * this.pages_num)
     },
-    sheetSize: function () {
+    sheetSizeInMeters: function () {
       if (this.format == null) {
         return 0
       }
@@ -147,7 +147,7 @@ export default {
     },
     sheetPrice: function () {
       this.setPaperFromString(this.format)
-      return this.sheetSize * this.paperWeight * this.kgPrice / 1000
+      return this.sheetSizeInMeters * this.paperWeight * this.kgPrice / 1000
     }
   }
 

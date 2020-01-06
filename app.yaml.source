@@ -1,0 +1,54 @@
+runtime: php55
+api_version: '1'
+env: standard
+threadsafe: true
+instance_class: F1
+default_expiration: 300s
+handlers:
+  - url: /(.*\.(appcache|manifest))
+    application_readable: false
+    mime_type: text/cache-manifest
+    static_files: \1
+    require_matching_file: false
+    upload: (.*\.(appcache|manifest))
+  - url: /(.*\.css)
+    application_readable: false
+    mime_type: text/css
+    static_files: \1
+    require_matching_file: false
+    upload: (.*\.css)
+  - url: /statics/(.*\.(bmp|gif|ico|jpeg|jpg|png))
+    application_readable: false
+    static_files: statics/\1
+    require_matching_file: false
+    upload: statics/(.*\.(bmp|gif|ico|jpeg|jpg|png))
+  - url: /fonts/(.*\.woff)
+    application_readable: false
+    mime_type: application/x-font-woff
+    static_files: fonts/\1
+    require_matching_file: false
+    upload: fonts/(.*\.woff)
+  - url: /js/(.*\.js)
+    application_readable: false
+    mime_type: text/javascript
+    static_files: js/\1
+    require_matching_file: false
+    upload: js/(.*\.js)
+  - url: /
+    application_readable: false
+    expiration: 60000
+    static_files: index.html
+    require_matching_file: false
+    upload: index.html
+  - url: /(.*)
+    application_readable: false
+    expiration: 60000
+    static_files: index.html
+    require_matching_file: false
+    upload: index.html
+automatic_scaling:
+  min_idle_instances: automatic
+  max_idle_instances: automatic
+  min_pending_latency: automatic
+  max_pending_latency: automatic
+network: {}
